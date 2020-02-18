@@ -1,0 +1,20 @@
+---
+title: "Data analysis"
+author: "Fabio Trecca"
+date: "2/11/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+require(knitr)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
+library(tidyverse)
+ggplot2::theme_set(theme_bw())
+```
+
+```{r load data}
+Samples <- read_csv("Exported_EyeLink_data/Samples_merged.csv") %>% 
+  mutate(GazeY = 1051-GazeY, Fix_MeanY = 1051-Fix_MeanY) %>% 
+  filter(Time<=41202)
+```
+
