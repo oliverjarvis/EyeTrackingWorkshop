@@ -18,3 +18,57 @@ Samples <- read_csv("Exported_EyeLink_data/Samples_merged.csv") %>%
   filter(Time<=41202)
 ```
 
+```{r}
+library(pacman)
+p_load(lmerTest, DHARMa)
+
+Sac <- Samples[!is.na(Samples$Sac_Amplitude),] %>%
+  subset(Task == "Foraging") %>% 
+  group_by(ParticipantID, Trial, SaccadeNo, Stimulus) %>% 
+  summarize(Sac_Duration = mean(Sac_Duration, na.rm=T),
+            Sac_Amplitude = mean(Sac_Amplitude, na.rm=T),
+            Task = Task[1], 
+            ParticipantGender = ParticipantGender[1], 
+            Stim = Stimulus[1], 
+            ForagingType = ForagingType[1]) 
+
+plot(density(Sac$Sac_Amplitude))
+
+model_log <- glmer(formula = Sac_Amplitude ~ 1 + 
+                     ForagingType + 
+                     (1 + ForagingType | ParticipantID) + 
+                     (1 + ForagingType | Stim), 
+                data = Sac, 
+                family = gaussian(link = log))
+
+model_norm <- glmer(formula = Sac_Amplitude ~ 1 + 
+                      ForagingType + 
+                      (1 + ForagingType | ParticipantID) + 
+                      (1 + ForagingType | Stim),
+                data = Sac, 
+                family = gaussian(link = identity))
+
+summary(model_log)
+summary(model_norm)
+
+plot(model_log)
+plot(model_norm)
+
+pmlog <- predict(model_log)
+pmgaus <- predict(model_norm)
+
+plot(density(pmlog))
+plot(density(pmgaus))
+plot(density(Sac$Sac_Amplitude))
+
+summary(abs(pm1-Sac$Sac_Amplitude))
+
+dgaus <- DHARMa::simulateResiduals(model_norm)
+dlog <- DHARMa::simulateResiduals(model_log)
+plot(dgaus)
+plot(dlog)
+
+MuMIn::r.squaredGLMM(mLog)#Model predicts/accounts for almost no variance, so even though there is a significant difference
+#between the conditions in the model based on the p-value, the model is not useful for actually predicting.
+
+```

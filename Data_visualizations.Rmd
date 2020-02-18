@@ -127,12 +127,12 @@ Fix <- x[!is.na(x$FixationNo),] %>%
   summarize(MeanX = Fix_MeanX[1], MeanY = Fix_MeanY[1], Duration = Fix_Duration[1]) %>% 
   filter(Duration>=300) # only keep fixations > 300 ms
 
-img <- jpeg::readJPEG(i)  
-img <- grid::rasterGrob(img, width=unit(1, "npc"), height = unit(1,"npc"),
-                        interpolate = FALSE)
+#img <- jpeg::readJPEG(i)  
+#img <- grid::rasterGrob(img, width=unit(1, "npc"), height = unit(1,"npc"),
+#                        interpolate = FALSE)
 
 ggplot(Fix, aes(MeanX, MeanY, color = Fix$FixationNo)) + 
-  annotation_custom(img, xmin = 0, xmax = 1680, ymin = 0, ymax = 1050) +
+#  annotation_custom(img, xmin = 0, xmax = 1680, ymin = 0, ymax = 1050) +
   geom_path(color = "black") +
   geom_point(size = Fix$Duration*.02, alpha = .8) +
   ggrepel::geom_text_repel(aes(label = Fix$Duration), size = 3, color = "white") +
@@ -157,15 +157,15 @@ Fix_foraging <- x_foraging[!is.na(x_foraging$FixationNo),] %>%
   summarize(MeanX = Fix_MeanX[1], MeanY = Fix_MeanY[1], Duration = Fix_Duration[1]) %>% 
   filter(Duration>=300) # only keep fixations > 300 ms
 
-files <- list.files("stimuli_Foraging")
+#files <- list.files("stimuli_Foraging")
 
 #Creating the loop
 for (i in unique(Fix_foraging$ParticipantID)){
-  for (i in files){
-    img <- jpeg::readJPEG(i)  
-    img <- grid::rasterGrob(img, width=unit(1, "npc"), height = unit(1,"npc"),
-                        interpolate = FALSE)
-  }
+#  for (i in files){
+#    img <- jpeg::readJPEG(i)  
+#    img <- grid::rasterGrob(img, width=unit(1, "npc"), height = unit(1,"npc"),
+#                        interpolate = FALSE)
+#  }
   foraging_subset <- Fix_foraging[Fix_foraging$ParticipantID == i,]
   plot <- ggplot(foraging_subset, aes(MeanX, MeanY, color = foraging_subset$FixationNo)) + 
   geom_path(color = "black") +
